@@ -10,9 +10,11 @@ import java.net.Socket;
 public class ClientReader extends Thread {
 	
 	Socket socket;
+	long id;
 
-	public ClientReader(Socket socket) throws IOException {
+	public ClientReader(Socket socket, long id) throws IOException {
 		this.socket = socket;
+		this.id = id;
 	}
 
     public void run() {
@@ -30,7 +32,7 @@ public class ClientReader extends Thread {
         		System.out.println("#RECEIVED: "+message);
         		
         		// Traitement
-        		String treated_message = message_interpreter.treat(message);
+        		String treated_message = message_interpreter.treat(message, id);
         		System.out.println(treated_message);
         		
         		// Répond au client

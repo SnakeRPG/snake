@@ -140,14 +140,14 @@ public class DataManager {
 	 * @param mdp 
 	 * @throws SQLException 
 	 */
-	public boolean login ( String username, String mdp ) throws SQLException {
+	public int login ( String username, String mdp ) throws SQLException {
 		UserLogged ul = UserLogged.getInstance();
-		boolean ret;
+		int ret = TreatmentController.CODE_REQUEST_NOT_DONE;
 		
 		// Si l'utilisateur est déjà connecté
 		if ( ul.contains( username ) ) {
 			System.out.println("user "+ username + " déjà co");
-			ret = false;
+			ret = TreatmentController.CODE_USER_ALREADY_LOGGED;
 		} else {
 			// On vérifie le mdp
 			Statement stmt = connector.createStatement();
@@ -156,20 +156,27 @@ public class DataManager {
 
 			System.out.println(request);
 			
-			// On récupère le mdp
-			rs.next();
-			String mdp_bdd = rs.getString("password");
-			
-			// On hash le mdp récupéré pour le comparer avec celui reçu
-			String mdp_hashed = HashPassword.get_SHA_512_SecurePassword(mdp);
-			
-			// Si les mdp sont égaux, on connecte l'utilisateur
-			if ( mdp_bdd.equals( mdp_hashed ) ) {
-				ul.add(username);
-//					System.out.println("Login: "+ username +", mdp: "+ mdp);
+			// Si on a trouvé un élément correspondant à la requête
+			if ( rs.next() ) {
+				String mdp_bdd = rs.getString("password");
+				
+				// On hash le mdp récupéré pour le comparer avec celui reçu
+				String mdp_hashed = HashPassword.get_SHA_512_SecurePassword(mdp);
+				
+				// Si les mdp sont égaux, on connecte l'utilisateur
+				if ( mdp_bdd.equals( mdp_hashed ) ) {
+					ul.add(username);
+					ret = TreatmentController.CODE_REQUEST_DONE;
+//						System.out.println("Login: "+ username +", mdp: "+ mdp);
+				} else {
+					ret = TreatmentController.CODE_USER_WRONG_MDP;
+				}
+			} else {
+				ret = TreatmentController.CODE_USER_WRONG_USERNAME;
 			}
 			
-			ret = true;			
+			
+						
 		}
 		
 		return ret;
@@ -179,15 +186,16 @@ public class DataManager {
 	 * Déconnecte le joueur
 	 * @param username
 	 */
-	public boolean logout ( String username ) {
+	public int logout ( String username ) {
 		UserLogged ul = UserLogged.getInstance();
-		boolean ret = true;
+		int ret = TreatmentController.CODE_REQUEST_NOT_DONE;
 		
 		// On regarde si l'utilisateur est connecté
 		if ( ul.contains( username ) ) {
 
 			System.out.println("Logout: "+ username);
 			ul.remove( username );
+			ret = TreatmentController.CODE_REQUEST_DONE;
 			
 		}
 		

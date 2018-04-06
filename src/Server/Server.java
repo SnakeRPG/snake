@@ -22,6 +22,9 @@ public class Server extends ServerSocket {
 		BufferedReader in = null;
 		DataOutputStream out = null;
 		
+		// initialisation d'un id unique pour l'associer à un username
+		long idClient = 1;
+		
 		// On attend qu'un client veuille nous contacter
 		while (true) {
 			
@@ -29,8 +32,10 @@ public class Server extends ServerSocket {
 			socket = this.accept();
 			
 			// On lance le thread d'écoute
-			ClientReader cr = new ClientReader(socket);
+			ClientReader cr = new ClientReader(socket, idClient);
 			cr.start();
+			
+			idClient++;
 		}
 	}
 

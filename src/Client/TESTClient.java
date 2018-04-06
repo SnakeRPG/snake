@@ -36,7 +36,7 @@ public class TESTClient {
 				String mess_logout = "{'header':{'username':'USERNAME', 'ipPlayer':'IPPLAYER', 'typeEvent':'authentication'}, 'data':{'connect':'false'}}";
 				String mess_skill_add = "{'header':{'username':'Louis', 'ipPlayer':'IPPLAYER', 'typeEvent':'skill'}, 'data':{'idSnake':'1', 'idSkill':'1', 'add':'true'}}";
 				String mess_game_left = "{'header':{'username':'USERNAME', 'ipPlayer':'IPPLAYER', 'typeEvent':'game'}, 'data':{'idKey':'"+ KeyEvent.VK_DOWN +"'}}";
-				String message = mess_skill_add;
+				String message = "{'header':{'username':'USERNAME', 'idClient':'5', 'typeEvent':'authentication'}, 'data':{'connect':'false'}}";
 	            streamOut.writeUTF(message);
 	            streamOut.flush();
 	            while (line.equals("")) {

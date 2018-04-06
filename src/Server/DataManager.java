@@ -197,6 +197,8 @@ public class DataManager {
 			ul.remove( username );
 			ret = TreatmentController.CODE_REQUEST_DONE;
 			
+		} else {
+			ret = TreatmentController.CODE_USER_NOT_LOGGED;
 		}
 		
 		return ret;

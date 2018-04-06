@@ -29,6 +29,7 @@ public class ServerLink {
 	static final int CODE_USER_WRONG_USERNAME = 7;
 	static final int CODE_USER_WRONG_MDP = 8;
 	static final int CODE_IDCLIENT_DIFFERENT = 9;
+	static final int CODE_USER_NOT_LOGGED = 10;
 	
 	static ServerLink instance;
 	
@@ -40,20 +41,12 @@ public class ServerLink {
 	private PrintWriter streamOut;
 	private BufferedReader streamIn;
 	
-	private ServerLink() {
-		try {
-			this.socket = new Socket("127.0.0.1", 2020);
-			this.streamOut = new PrintWriter(socket.getOutputStream());
-	        this.streamIn = new BufferedReader( new InputStreamReader( this.socket.getInputStream() ) );
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
 	
 	public int login( String username, String mdp ) throws IOException {
-		
+
+        // On connecte le socket
+        connect();
+        
 		String message = JSONConstructor.login(this.username, this.idClient, mdp);
         streamOut.println(message);
         streamOut.flush();
@@ -78,7 +71,7 @@ public class ServerLink {
 	}
 
 	public int logout() throws IOException {
-		int code = CODE_REQUEST_DONE;
+		int code = CODE_REQUEST_NOT_DONE;
 		
 		if ( this.username != null ) {
 			String message = JSONConstructor.logout(this.username, this.idClient);
@@ -94,9 +87,36 @@ public class ServerLink {
 	        }
 	        
 	        JSONObject receivedJson = new JSONObject( receivedMessage );
-	        code = receivedJson.getInt( ID_RESPONSE ); 
+	        code = receivedJson.getInt( ID_RESPONSE );
+	        
+	        // On déconnecte le socket
+	        disconnect();
 		}
         return code;
+	}
+	
+	public void connect() {
+		try {
+			this.socket = new Socket("127.0.0.1", 2020);
+			this.streamOut = new PrintWriter(socket.getOutputStream());
+	        this.streamIn = new BufferedReader( new InputStreamReader( this.socket.getInputStream() ) );
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public void disconnect() {
+		try {
+			this.streamIn.close();
+			this.streamOut.close();
+			this.socket.close();
+			this.username = null;
+			this.idClient = 0;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public void setUsername( String username ) {

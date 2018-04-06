@@ -36,8 +36,8 @@ public class Pan_login extends JPanel {
 		b_connexion = new JButton("Connexion");
 		l_login = new JLabel("Login:");
 		l_mdp = new JLabel("Password:");
-		tf_login = new JTextField();
-		tf_mdp = new JTextField();
+		tf_login = new JTextField("USERNAME");
+		tf_mdp = new JTextField("123456");
 		
 		initUI();
 	}

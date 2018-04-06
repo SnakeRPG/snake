@@ -8,10 +8,11 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-public class Interface extends JFrame implements WindowListener {
+public class Interface extends JFrame {
 
 	static Interface instance;
 
@@ -28,6 +29,21 @@ public class Interface extends JFrame implements WindowListener {
 	    setLocationRelativeTo(null);
 	    // Resizable ou non
 	    setResizable(true);
+	    // On close, logout user
+	    setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+	    addWindowListener( new java.awt.event.WindowAdapter() {
+	    	@Override
+	        public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+	    		ServerLink sl = ServerLink.getInstance();
+	    		try {
+	    			sl.logout();
+	    		} catch (IOException e) {
+	    			JOptionPane.showMessageDialog( null, e.getMessage(), "Error",  JOptionPane.ERROR_MESSAGE);
+	    		}
+	    		
+	    		System.exit(0);
+	        }
+	    });
         
         initElement();
         
@@ -61,58 +77,5 @@ public class Interface extends JFrame implements WindowListener {
             }
         });
     }
-
-	@Override
-	public void windowActivated(WindowEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	/**
-	 * A la fermeture on deconnecte l'user
-	 */
-	@Override
-	public void windowClosed(WindowEvent arg0) {
-
-		ServerLink sl = ServerLink.getInstance();
-		
-		try {
-			sl.logout();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-	}
-
-	@Override
-	public void windowClosing(WindowEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void windowDeactivated(WindowEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void windowDeiconified(WindowEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void windowIconified(WindowEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void windowOpened(WindowEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
 
 }

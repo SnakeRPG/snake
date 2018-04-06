@@ -7,6 +7,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+import org.json.JSONObject;
+
 public class ClientReader extends Thread {
 	
 	Socket socket;
@@ -40,6 +42,12 @@ public class ClientReader extends Thread {
         		out.println(treated_message);
         		out.flush();
         		
+        		// On regarde si l'user s'est déconnecté, si oui on ferme le socket
+        		String username = new JSONObject( message ).getJSONObject( TreatmentController.ID_HEADER ).getString( TreatmentController.ID_USERNAME );
+        		if ( ! UserLogged.getInstance().contains( username ) ) {
+        			System.out.println("Connection client "+id+" closed");
+        			running = false;
+        		}
             }
             
     		// Ferme connection

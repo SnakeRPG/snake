@@ -18,6 +18,7 @@ abstract public class TreatmentController {
 	static final int CODE_USER_WRONG_USERNAME = 7;
 	static final int CODE_USER_WRONG_MDP = 8;
 	static final int CODE_IDCLIENT_DIFFERENT = 9;
+	static final int CODE_USER_NOT_LOGGED = 10;
 	
 	// ID dans le json reçu
 	static final String ID_HEADER = "header";

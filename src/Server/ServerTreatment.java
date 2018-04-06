@@ -14,34 +14,48 @@ public class ServerTreatment {
 		controllerFactory = new ControllerFactory();
 	}
 
-	public String treat( String message ) {
+	public String treat( String message, long id ) {
 
-		String res = "ERROR- ";
+		String res = ResponseConstructor.create( TreatmentController.CODE_REQUEST_NOT_DONE );
 		
 		// Si le JSON est invalide
 		if ( ! this.isValidJson(message) ) {
-			res += "JSON non valide";
+			res = ResponseConstructor.create( TreatmentController.CODE_REQUEST_UNRECOGNIZE );
 		} else {
 			
 			// On récupère les objets JSON
 			JSONObject json_object = new JSONObject( message );
+			JSONObject json_header = json_object.getJSONObject( TreatmentController.ID_HEADER );
+			JSONObject json_data= json_object.getJSONObject( TreatmentController.ID_DATA );
+			String type = json_header.getString( TreatmentController.ID_TYPE );
 			try {
-				JSONObject json_header = json_object.getJSONObject( TreatmentController.ID_HEADER );
-				JSONObject json_data= json_object.getJSONObject( TreatmentController.ID_DATA );
-
-				// On récupère le controller adequat pour répondre à l'action
-				String type = json_header.getString( TreatmentController.ID_TYPE );
-				controller = controllerFactory.create(type);
 				
-				// On récupère l'utilisateur
-				String username = json_header.getString( TreatmentController.ID_USERNAME );
-				
-				// On récupère la réponse au format String 
-				res = controller.treatJson( username, json_data );
+				// Si l'id du client correspond à celui qu'il y a dans la requête ou qu'il demande l'identification, on peut la traiter
+				long idClient = json_header.getLong( TreatmentController.ID_IDCLIENT );
+				if ( type.equals( ControllerFactory.ID_AUTHENTICATION ) || id == idClient ) {
+					
+					// On récupère le controller adequat pour répondre à l'action
+					controller = controllerFactory.create(type);
+					
+					// On récupère l'utilisateur
+					String username = json_header.getString( TreatmentController.ID_USERNAME );
+					
+					// On récupère la réponse au format JSON 
+					JSONObject json_res = controller.treatJson( username, json_data );
+					
+					// On ajoute l'id si on n'en a pas eu
+					if ( idClient == 0 ) {
+						json_res.accumulate(TreatmentController.ID_IDCLIENT, id);
+					}
+					
+					// On la traduit en String
+					res = json_res.toString();
+					
+				} else {
+					res = ResponseConstructor.create( TreatmentController.CODE_IDCLIENT_DIFFERENT );
+				}
 			} catch (JSONException ex1) {
-				// On n'arrive pas à parser le JSON
-				res += "JSON mal formé\n";
-				res+= ex1.getMessage();
+				// Nothing to do: res aura le code de la requete non effectuée
 	        }
 			
 		}

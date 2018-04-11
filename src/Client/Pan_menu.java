@@ -2,11 +2,14 @@ package Client;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.GridLayout;
 import java.awt.MenuItem;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import javax.swing.JButton;
 import javax.swing.JMenu;
@@ -20,6 +23,8 @@ public class Pan_menu extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	
+	public static final String URL_LIST_SNAKES = "www.google.com";
+	
 	public static Pan_menu instance;
 	
 	private JPanel current_panel;
@@ -29,7 +34,7 @@ public class Pan_menu extends JPanel {
 	private JButton b_snakes;
 	private JButton b_logout;
 	
-	public Pan_menu() {
+	private Pan_menu() {
 		setLayout(new BorderLayout());
 		
 		pan_buttons = new JPanel();
@@ -60,11 +65,9 @@ public class Pan_menu extends JPanel {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-
-				JPanel pan = new JPanel();
-				pan.add(new JTextField("EH FAIS VOIR MES KESNÉ"));
-				Pan_menu.getInstance().setPanel(pan);
 				
+				openUrl( URL_LIST_SNAKES );
+
 			}
 		});
 		
@@ -85,9 +88,30 @@ public class Pan_menu extends JPanel {
 		pan_buttons.add(b_play);
 		pan_buttons.add(b_snakes);
 		pan_buttons.add(b_logout);
-		
+
 		this.add(pan_buttons, BorderLayout.WEST);
-    	setBackground(Color.BLUE);
+//		this.add(Pan_article.getInstance(), BorderLayout.CENTER);
+	}
+	
+	private void openUrl( String url ) {
+		// Browser commun
+		String[] browsers = { "firefox", "opera", "mozilla", "netscape" };
+		String browser = null;
+		
+		try {
+			for (int count = 0; count < browsers.length && browser == null; count++) {
+				if (Runtime.getRuntime().exec(new String[] { "which", browsers[count] }).waitFor() == 0) {
+					// have found a browser
+					browser = browsers[count];
+				}
+			}
+			// open using a browser
+			Runtime.getRuntime().exec(new String[] { browser, url });
+			
+		} catch (InterruptedException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public void setPanel( JPanel pan ) {

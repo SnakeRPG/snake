@@ -29,7 +29,7 @@ public class Interface extends JFrame {
 	    setLocationRelativeTo(null);
 	    // Resizable ou non
 	    setResizable(true);
-	    // On close, logout user
+	    // A la fermeture, logout user
 	    setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 	    addWindowListener( new java.awt.event.WindowAdapter() {
 	    	@Override

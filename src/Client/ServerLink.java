@@ -62,8 +62,8 @@ public class ServerLink {
         JSONObject receivedJson = new JSONObject( receivedMessage );
         int code = receivedJson.getInt( ID_RESPONSE );
 
-		// On donne le codeClient au ServerLink pour les requêtes si nous en a envoyé un
-        if ( receivedJson.has( ID_IDCLIENT ) ) {
+		// On donne le codeClient au ServerLink pour les requêtes si nous en a envoyé un et que le code de retour est bon
+        if ( receivedJson.has( ID_IDCLIENT ) && code == CODE_REQUEST_DONE ) {
         	this.idClient = receivedJson.getLong( ID_IDCLIENT );
         }
 		
